@@ -1,33 +1,22 @@
 import request from '../utils/request'
-import { withLoading } from '../utils/loading'
 
 /**
- * 模拟登录接口（后续可替换为真实后端）
- * 任意非空账号密码即可登录
+ * 登录：对接 mall-auth /auth/login
  */
 export function login(data) {
-  return withLoading(
-    new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const username = data?.username?.trim()
-        const password = data?.password?.trim()
-        if (!username || !password) {
-          reject(new Error('请输入账号和密码'))
-          return
-        }
-        resolve({
-          token: `mock-token-${Date.now()}`,
-          profile: {
-            id: 1,
-            username,
-          },
-        })
-      }, 400)
-    }),
-  )
+  return request.post('/auth/login', data).then((res) => ({
+    token: res.token,
+    profile: {
+      id: res.userId,
+      username: res.username,
+      nickname: res.nickname,
+    },
+  }))
 }
 
-/** 预留真实接口调用示例 */
-export function fetchProfile() {
-  return request.get('/user/profile')
+/**
+ * 会员分页：对接 mall-user（管理能力预留）
+ */
+export function fetchMembers(params) {
+  return request.get('/user/members', { params })
 }

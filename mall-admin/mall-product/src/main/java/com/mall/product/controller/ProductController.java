@@ -22,8 +22,10 @@ public class ProductController {
     @SentinelResource("product-page")
     public R<Page<PmsProduct>> page(@RequestParam(defaultValue = "1") long pageNum,
                                     @RequestParam(defaultValue = "10") long pageSize,
-                                    @RequestParam(required = false) String keyword) {
-        return R.ok(productService.page(pageNum, pageSize, keyword));
+                                    @RequestParam(required = false) String keyword,
+                                    @RequestParam(required = false) Long categoryId,
+                                    @RequestParam(required = false, defaultValue = "default") String sort) {
+        return R.ok(productService.page(pageNum, pageSize, keyword, categoryId, sort));
     }
 
     @GetMapping("/{id}")

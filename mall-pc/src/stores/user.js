@@ -32,7 +32,7 @@ export const useUserStore = defineStore('user', {
   state: () => loadUser(),
   getters: {
     isLogin: (state) => Boolean(state.token),
-    displayName: (state) => state.profile?.username || '用户',
+    displayName: (state) => state.profile?.nickname || state.profile?.username || '用户',
   },
   actions: {
     setUser(profile, token = '') {

@@ -6,7 +6,7 @@ import com.mall.product.entity.PmsProduct;
 
 public interface ProductService {
 
-    Page<PmsProduct> page(long pageNum, long pageSize, String keyword);
+    Page<PmsProduct> page(long pageNum, long pageSize, String keyword, Long categoryId, String sort);
 
     PmsProduct getById(Long id);
 

@@ -28,8 +28,8 @@ const onSubmit = async () => {
     ElMessage.success('登录成功')
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
     router.replace(redirect || '/')
-  } catch (error) {
-    ElMessage.error(error.message || '登录失败')
+  } catch {
+    // 错误提示由 request 拦截器统一处理
   } finally {
     loading.value = false
   }
@@ -44,7 +44,7 @@ const goHome = () => {
   <div class="login-page">
     <div class="login-card">
       <h1 class="title" @click="goHome">Mall PC</h1>
-      <p class="subtitle">登录后继续购物</p>
+      <p class="subtitle">账号 admin / 密码 admin123</p>
 
       <el-form label-position="top" @submit.prevent="onSubmit">
         <el-form-item label="账号">

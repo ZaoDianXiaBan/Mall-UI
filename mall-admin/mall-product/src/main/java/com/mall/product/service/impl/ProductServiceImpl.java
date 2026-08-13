@@ -20,12 +20,25 @@ public class ProductServiceImpl implements ProductService {
     private final PmsProductMapper pmsProductMapper;
 
     @Override
-    public Page<PmsProduct> page(long pageNum, long pageSize, String keyword) {
+    public Page<PmsProduct> page(long pageNum, long pageSize, String keyword, Long categoryId, String sort) {
         LambdaQueryWrapper<PmsProduct> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PmsProduct::getStatus, 1);
         if (StringUtils.hasText(keyword)) {
             wrapper.like(PmsProduct::getName, keyword);
         }
-        wrapper.orderByDesc(PmsProduct::getId);
+        if (categoryId != null) {
+            wrapper.eq(PmsProduct::getCategoryId, categoryId);
+        }
+        if ("price-asc".equals(sort)) {
+            wrapper.orderByAsc(PmsProduct::getPrice);
+        } else if ("price-desc".equals(sort) || "price".equals(sort)) {
+            wrapper.orderByDesc(PmsProduct::getPrice);
+        } else if ("sales".equals(sort)) {
+            // 暂无销量字段，退化为按库存倒序
+            wrapper.orderByDesc(PmsProduct::getStock);
+        } else {
+            wrapper.orderByDesc(PmsProduct::getId);
+        }
         return pmsProductMapper.selectPage(new Page<>(pageNum, pageSize), wrapper);
     }
 

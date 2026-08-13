@@ -8,6 +8,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -29,12 +30,25 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String path = exchange.getRequest().getURI().getPath();
+        ServerHttpRequest request = exchange.getRequest();
+        String path = request.getURI().getPath();
+        HttpMethod method = request.getMethod();
+
         if (WHITE_LIST.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
         }
 
-        String auth = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        // PC 商城商品浏览接口放行
+        if (method == HttpMethod.GET && path.startsWith("/product")) {
+            return chain.filter(exchange);
+        }
+
+        // 预检请求放行
+        if (method == HttpMethod.OPTIONS) {
+            return chain.filter(exchange);
+        }
+
+        String auth = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (auth == null || !auth.startsWith(AuthConstants.TOKEN_PREFIX)) {
             return unauthorized(exchange.getResponse(), "未登录或 Token 缺失");
         }
@@ -42,11 +56,11 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         try {
             String token = auth.substring(AuthConstants.TOKEN_PREFIX.length());
             Claims claims = JwtUtils.parse(token);
-            ServerHttpRequest request = exchange.getRequest().mutate()
+            ServerHttpRequest mutated = request.mutate()
                     .header("X-User-Id", claims.getSubject())
                     .header("X-Username", String.valueOf(claims.get("username")))
                     .build();
-            return chain.filter(exchange.mutate().request(request).build());
+            return chain.filter(exchange.mutate().request(mutated).build());
         } catch (Exception ex) {
             return unauthorized(exchange.getResponse(), "Token 无效或已过期");
         }
