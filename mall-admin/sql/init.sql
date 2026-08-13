@@ -83,16 +83,16 @@ CREATE TABLE IF NOT EXISTS sys_admin
     id          BIGINT PRIMARY KEY AUTO_INCREMENT,
     username    VARCHAR(64)  NOT NULL UNIQUE,
     password    VARCHAR(128) NOT NULL,
-    nickname    VARCHAR(64)  DEFAULT NULL,
+    nickname    VARCHAR(128) DEFAULT NULL,
     status      TINYINT      NOT NULL DEFAULT 1 COMMENT '1启用 0禁用',
     created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
--- password = admin123 (BCrypt)
+-- password = admin123 (BCrypt)，启动时也会由 Auth 服务重置
 INSERT INTO sys_admin(username, password, nickname, status)
 VALUES ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '超级管理员', 1)
-ON DUPLICATE KEY UPDATE username = username;
+ON DUPLICATE KEY UPDATE nickname = VALUES(nickname);
 
 -- ===================== User =====================
 USE mall_user;
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS ums_member
 (
     id         BIGINT PRIMARY KEY AUTO_INCREMENT,
     username   VARCHAR(64) NOT NULL UNIQUE,
-    nickname   VARCHAR(64) DEFAULT NULL,
+    nickname   VARCHAR(128) DEFAULT NULL,
     phone      VARCHAR(20) DEFAULT NULL,
     status     TINYINT     NOT NULL DEFAULT 1,
     created_at DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -110,7 +110,8 @@ CREATE TABLE IF NOT EXISTS ums_member
 
 INSERT INTO ums_member(username, nickname, phone, status)
 VALUES ('user001', '张三', '13800000001', 1),
-       ('user002', '李四', '13800000002', 1);
+       ('user002', '李四', '13800000002', 1)
+ON DUPLICATE KEY UPDATE nickname = VALUES(nickname);
 
 -- ===================== Product =====================
 USE mall_product;
