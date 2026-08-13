@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mall-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --lower-case-table-names=1
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mall-mysql-data:/var/lib/mysql
+
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    container_name: mall-nacos
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_NAME: nacos_config
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root
+      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+      NACOS_AUTH_ENABLE: "false"
+
+  seata-server:
+    image: seataio/seata-server:2.0.0
+    container_name: mall-seata
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - nacos
+    ports:
+      - "8091:8091"
+      - "7091:7091"
+    environment:
+      SEATA_PORT: 8091
+      STORE_MODE: db
+      SEATA_IP: seata-server
+
+  sentinel-dashboard:
+    image: bladex/sentinel-dashboard:1.8.8
+    container_name: mall-sentinel
+    restart: unless-stopped
+    ports:
+      - "8858:8858"
+
+volumes:
+  mall-mysql-data:

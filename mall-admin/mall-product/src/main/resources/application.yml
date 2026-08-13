@@ -1,0 +1,46 @@
+server:
+  port: 9003
+
+spring:
+  application:
+    name: mall-product
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/mall_product?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: root
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: mall
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:8858
+        port: 8722
+    alibaba:
+      seata:
+        tx-service-group: mall-tx-group
+
+seata:
+  enabled: true
+  application-id: mall-product
+  tx-service-group: mall-tx-group
+  service:
+    vgroup-mapping:
+      mall-tx-group: default
+    grouplist:
+      default: 127.0.0.1:8091
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: mall
+  config:
+    type: file
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true

@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mall-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: mall
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:8858
+        port: 8719
+      eager: true
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      routes:
+        - id: mall-auth
+          uri: lb://mall-auth
+          predicates:
+            - Path=/auth/**
+        - id: mall-user
+          uri: lb://mall-user
+          predicates:
+            - Path=/user/**
+        - id: mall-product
+          uri: lb://mall-product
+          predicates:
+            - Path=/product/**
+        - id: mall-order
+          uri: lb://mall-order
+          predicates:
+            - Path=/order/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

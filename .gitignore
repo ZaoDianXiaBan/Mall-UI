@@ -3,3 +3,9 @@ dist/
 .DS_Store
 *.local
 .vite/
+.idea/
+*.iml
+target/
+*.class
+*.log
+.vscode/
