@@ -1,0 +1,22 @@
+# PC 端电商项目规范
+技术栈：Vue3 + Vite + Vue Router 4 + Pinia + Axios + Element Plus
+平台：仅 PC 端（1280px+），不做移动端适配
+语言：JavaScript（不使用 TypeScript）
+
+编码规范：
+- 使用 Composition API + <script setup>
+- 页面布局使用 Element Plus 的 ElContainer / ElAside / ElMain
+- 所有列表页使用 ElTable 或 ElRow/ElCol（24 栅格）
+- 商品卡片统一使用 ElCard
+- 路由使用懒加载
+- 状态管理使用 Pinia，购物车、用户态分 store
+- 接口统一封装在 src/api
+- 图片使用 https://picsum.photos 或 Unsplash
+
+禁止：
+- 不使用 rem/vw/vh 做移动端适配
+- 不使用 Vant / 任何移动端 UI
+- 不在页面中写死 mock 数据
+
+Git：
+- 每完成一个功能模块必须 git commit
