@@ -31,7 +31,7 @@ const addToCart = (event) => {
 
 <template>
   <el-card class="product-card" shadow="hover" @click="goDetail">
-    <img class="product-image" :src="product.image" :alt="product.name" />
+    <img v-lazy="product.image" class="product-image" :alt="product.name" />
     <div class="product-name" :title="product.name">{{ product.name }}</div>
     <div class="product-footer">
       <span class="product-price">¥{{ product.price.toFixed(2) }}</span>

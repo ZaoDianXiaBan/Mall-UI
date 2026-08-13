@@ -2,10 +2,13 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ShoppingCart, User } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import { useCartStore } from '../stores/cart'
+import { useUserStore } from '../stores/user'
 
 const router = useRouter()
 const cartStore = useCartStore()
+const userStore = useUserStore()
 const keyword = ref('')
 const cartCount = computed(() => cartStore.totalCount)
 
@@ -25,7 +28,16 @@ const goCart = () => {
 }
 
 const goLogin = () => {
-  // 登录页后续补充
+  router.push({
+    path: '/login',
+    query: { redirect: router.currentRoute.value.fullPath },
+  })
+}
+
+const onLogout = () => {
+  userStore.logout()
+  ElMessage.success('已退出登录')
+  router.push('/')
 }
 </script>
 
@@ -52,7 +64,15 @@ const goLogin = () => {
           <span>购物车</span>
         </el-button>
       </el-badge>
-      <el-button text @click="goLogin">
+
+      <template v-if="userStore.isLogin">
+        <el-button text>
+          <el-icon :size="18"><User /></el-icon>
+          <span>{{ userStore.displayName }}</span>
+        </el-button>
+        <el-button text @click="onLogout">退出</el-button>
+      </template>
+      <el-button v-else text @click="goLogin">
         <el-icon :size="18"><User /></el-icon>
         <span>登录</span>
       </el-button>

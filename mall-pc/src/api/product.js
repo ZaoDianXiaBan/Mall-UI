@@ -332,10 +332,14 @@ const products = [
   },
 ]
 
+import { withLoading } from '../utils/loading'
+
 function delay(data, ms = 200) {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(data), ms)
-  })
+  return withLoading(
+    new Promise((resolve) => {
+      setTimeout(() => resolve(data), ms)
+    }),
+  )
 }
 
 export function getBanners() {

@@ -46,7 +46,7 @@ const checkout = () => {
         <el-table-column label="商品" min-width="360">
           <template #default="{ row }">
             <div class="product-cell">
-              <img :src="row.image" :alt="row.name" />
+              <img v-lazy="row.image" :alt="row.name" />
               <div>
                 <div class="name">{{ row.name }}</div>
                 <div v-if="row.skuLabel" class="sku">{{ row.skuLabel }}</div>

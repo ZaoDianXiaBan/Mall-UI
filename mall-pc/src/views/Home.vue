@@ -43,8 +43,8 @@ onMounted(async () => {
     <el-carousel height="360px" class="banner">
       <el-carousel-item v-for="item in banners" :key="item.id">
         <img
+          v-lazy="item.image"
           class="banner-image"
-          :src="item.image"
           :alt="`banner-${item.id}`"
           @click="goBanner(item)"
         />
@@ -56,7 +56,7 @@ onMounted(async () => {
       <el-row :gutter="16">
         <el-col v-for="item in categories" :key="item.id" :span="3">
           <div class="category-item" @click="goCategory(item)">
-            <img :src="item.icon" :alt="item.name" />
+            <img v-lazy="item.icon" :alt="item.name" />
             <span>{{ item.name }}</span>
           </div>
         </el-col>

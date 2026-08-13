@@ -78,12 +78,17 @@ onMounted(loadDetail)
       <el-row :gutter="32" class="detail-top">
         <el-col :span="10">
           <div class="gallery">
-            <img class="main-image" :src="activeImage" :alt="product.name" />
+            <img
+              :key="activeImage"
+              class="main-image"
+              v-lazy="activeImage"
+              :alt="product.name"
+            />
             <div class="thumbs">
               <img
                 v-for="(img, index) in product.images"
                 :key="index"
-                :src="img"
+                v-lazy="img"
                 :class="['thumb', { active: activeImage === img }]"
                 alt="thumb"
                 @click="activeImage = img"
