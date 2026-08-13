@@ -4,14 +4,16 @@ import request from '../utils/request'
  * 登录：对接 mall-auth /auth/login
  */
 export function login(data) {
-  return request.post('/auth/login', data).then((res) => ({
-    token: res.token,
-    profile: {
-      id: res.userId,
-      username: res.username,
-      nickname: res.nickname,
-    },
-  }))
+  return request
+    .post('/auth/login', data, { silentError: true })
+    .then((res) => ({
+      token: res.token,
+      profile: {
+        id: res.userId,
+        username: res.username,
+        nickname: res.nickname,
+      },
+    }))
 }
 
 /**

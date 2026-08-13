@@ -42,7 +42,9 @@ request.interceptors.response.use(
       if (payload.code === 0 || payload.code === 200) {
         return payload.data
       }
-      ElMessage.error(payload.message || '请求失败')
+      if (!response.config.silentError) {
+        ElMessage.error(payload.message || '请求失败')
+      }
       return Promise.reject(payload)
     }
 
@@ -62,20 +64,24 @@ request.interceptors.response.use(
     if (status === 401) {
       const userStore = useUserStore()
       userStore.logout()
-      ElMessage.error('登录已过期，请重新登录')
+      if (!error.config?.silentError) {
+        ElMessage.error('登录已过期，请重新登录')
+      }
       if (window.location.pathname !== '/login') {
         window.location.href = `/login?redirect=${encodeURIComponent(
           window.location.pathname + window.location.search,
         )}`
       }
-    } else if (status === 403) {
-      ElMessage.error('没有权限访问')
-    } else if (status === 404) {
-      ElMessage.error('请求资源不存在')
-    } else if (status >= 500) {
-      ElMessage.error('服务器错误，请稍后重试')
-    } else {
-      ElMessage.error(message)
+    } else if (!error.config?.silentError) {
+      if (status === 403) {
+        ElMessage.error('没有权限访问')
+      } else if (status === 404) {
+        ElMessage.error('请求资源不存在')
+      } else if (status >= 500) {
+        ElMessage.error('服务器错误，请稍后重试')
+      } else {
+        ElMessage.error(message)
+      }
     }
 
     return Promise.reject(error)

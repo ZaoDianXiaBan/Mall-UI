@@ -24,11 +24,11 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         SysAdmin admin = sysAdminMapper.selectOne(new LambdaQueryWrapper<SysAdmin>()
                 .eq(SysAdmin::getUsername, request.getUsername()));
-        if (admin == null || admin.getStatus() == null || admin.getStatus() != 1) {
-            throw new BusinessException("账号不存在或已禁用");
-        }
-        if (!passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
-            throw new BusinessException("用户名或密码错误");
+        if (admin == null
+                || admin.getStatus() == null
+                || admin.getStatus() != 1
+                || !passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
+            throw new BusinessException("用户名或密码输入错误");
         }
 
         Map<String, Object> claims = new HashMap<>();

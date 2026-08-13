@@ -29,7 +29,7 @@ const onSubmit = async () => {
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
     router.replace(redirect || '/')
   } catch {
-    // 错误提示由 request 拦截器统一处理
+    ElMessage.error('用户名或密码输入错误')
   } finally {
     loading.value = false
   }
