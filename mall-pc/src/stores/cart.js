@@ -1,14 +1,30 @@
 import { defineStore } from 'pinia'
 
+const CART_STORAGE_KEY = 'mall-pc-cart'
+
+function loadCartItems() {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY)
+    const data = raw ? JSON.parse(raw) : []
+    return Array.isArray(data) ? data : []
+  } catch {
+    return []
+  }
+}
+
+function saveCartItems(items) {
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
+}
+
 export const useCartStore = defineStore('cart', {
   state: () => ({
-    items: [],
+    items: loadCartItems(),
   }),
   getters: {
+    totalPrice: (state) =>
+      state.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     totalCount: (state) =>
       state.items.reduce((sum, item) => sum + item.quantity, 0),
-    totalAmount: (state) =>
-      state.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
   },
   actions: {
     addItem(product, quantity = 1) {
@@ -30,6 +46,11 @@ export const useCartStore = defineStore('cart', {
           quantity,
         })
       }
+      this.persist()
+    },
+    removeItem(key) {
+      this.items = this.items.filter((item) => item.key !== key)
+      this.persist()
     },
     updateQuantity(key, quantity) {
       const item = this.items.find((row) => row.key === key)
@@ -39,12 +60,14 @@ export const useCartStore = defineStore('cart', {
         return
       }
       item.quantity = quantity
+      this.persist()
     },
-    removeItem(key) {
-      this.items = this.items.filter((item) => item.key !== key)
-    },
-    clear() {
+    clearCart() {
       this.items = []
+      this.persist()
+    },
+    persist() {
+      saveCartItems(this.items)
     },
   },
 })

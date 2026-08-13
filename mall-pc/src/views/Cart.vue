@@ -8,7 +8,7 @@ const router = useRouter()
 const cartStore = useCartStore()
 
 const items = computed(() => cartStore.items)
-const totalAmount = computed(() => cartStore.totalAmount)
+const totalPrice = computed(() => cartStore.totalPrice)
 
 const onQuantityChange = (row, value) => {
   cartStore.updateQuantity(row.key, value)
@@ -85,7 +85,7 @@ const checkout = () => {
 
       <div class="cart-footer">
         <div class="total">
-          合计：<span>¥{{ totalAmount.toFixed(2) }}</span>
+          合计：<span>¥{{ totalPrice.toFixed(2) }}</span>
         </div>
         <el-button type="primary" size="large" @click="checkout">去结算</el-button>
       </div>
