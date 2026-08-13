@@ -38,7 +38,12 @@ services:
       MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
       JVM_XMS: 256m
       JVM_XMX: 256m
-      NACOS_AUTH_ENABLE: "false"
+      NACOS_AUTH_ENABLE: "true"
+      NACOS_AUTH_TOKEN: FAKESECRET_y1z2a3b4c5d6e7f8g9h0
+      NACOS_AUTH_IDENTITY_KEY: serverIdentity
+      NACOS_AUTH_IDENTITY_VALUE: security
+      NACOS_AUTH_USER: nacos
+      NACOS_AUTH_PASSWORD: nacos
 
   seata-server:
     image: seataio/seata-server:2.0.0

@@ -13,6 +13,8 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
         namespace: mall
     sentinel:
       transport:
@@ -36,6 +38,8 @@ seata:
     nacos:
       application: seata-server
       server-addr: 127.0.0.1:8848
+      username: nacos
+      password: nacos
       group: SEATA_GROUP
       namespace: mall
   config:
